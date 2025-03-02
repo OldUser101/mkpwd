@@ -1,0 +1,21 @@
+Source: mkpwd
+Package: mkpwd
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: Nathan Gill <nathan.j.gill@outlook.com>
+Homepage: https://github.com/OldUser101/mkpwd
+Vcs-Git: https://github.com/OldUser101/mkpwd.git
+Vcs-Browser: https://github.com/OldUser101/mkpwd
+Depends: libc6 (>= 2.34)
+Description: Secure command-line password generator
+ mkpwd quickly generates secure passwords from the command line, offering
+ a variety of options to suit your needs. You can specify the characters to 
+ include in generated passwords, including combinations of upper and 
+ lowercase letters, numbers, and symbols.
+ mkpwd also integrates with environment variables, allowing you to set 
+ default values to for common parameters, such as the length or character 
+ sets, making it extremely flexible and convenient for frequent use.
+ Whether you need a single password or a batch of many, this tool ensures 
+ secure, random passwords in a matter of seconds

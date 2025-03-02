@@ -4,6 +4,9 @@ bin
 # GNU Nano temporary files
 *.swp
 
+# Package directory
+pkg
+
 # Prerequisites
 *.d
 

@@ -144,7 +144,7 @@ void showHelp() {
 	printf("AUTHOR\n");
 	printf("	Written by Nathan Gill.\n");
 	printf("	Licensed under the BSD 2-Clause \"Simplified\" License.\n");
-	printf("	See \"LICENSE.txt\" for more information.\n\n");
+	printf("	See \"copyright\" for more information.\n\n");
 	printf("Run \"man mkpwd\" for examples, environment variables, and extended help.\n");
 }
 
