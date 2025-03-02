@@ -1,0 +1,57 @@
+.TH MKPWD 1 "March 2025" "mkpwd v1.0" "User Commands"
+.SH NAME
+mkpwd \- generate secure passwords
+.SH SYNOPSIS
+.B mkpwd
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B mkpwd
+is a command-line tool for generating secure passwords.
+.SH OPTIONS
+.TP
+.B -n XX, --number XX
+Number of passwords to generate (default: 1).
+.TP
+.B -l XX, --length XX
+Set the length of each password (default: 18).
+.TP
+.B -h, --help
+Display this help message and exit.
+.TP
+.B +lusn
+Include character sets:
+  \fBl\fR - Lowercase (a-z)  
+  \fBu\fR - Uppercase (A-Z)  
+  \fBs\fR - Symbols (!@#$%^& etc.)  
+  \fBn\fR - Numbers (0-9)  
+  (Default: +lun)
+.SH EXAMPLES
+.B mkpwd -n 5 -l 12 +lus
+
+Generates 5 passwords of length 12 using lowercase letters, uppercase letters, and symbols.
+.SH ENVIRONMENT
+.TP
+.B MKPWD_DEF_PASSWORDN
+Default value for \fB-n\fR.
+.TP
+.B MKPWD_DEF_PASSWORDLEN
+Default value for \fB-l\fR.
+.TP
+.B MKPWD_DEF_PASSWORDCHARS
+Default value for \fB+lusn\fR.
+.SH ERROR CODES
+.TP
+.B 0
+Successful exit.
+.TP
+.B 1
+Argument error. Check passed arguments and environment variables for errors.
+.TP
+.B 2
+Memory allocation error. There is not enough memory available to run \fBmkpwd\fR in the current configuration.
+.SH AUTHOR
+Written by Nathan Gill.
+.SH LICENSE
+Licensed under the BSD 2-Clause "Simplified" License. 
+See LICENSE.txt for more information.
+
