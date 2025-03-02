@@ -1,3 +1,9 @@
+# bin directory
+bin
+
+# GNU Nano temporary files
+*.swp
+
 # Prerequisites
 *.d
 
