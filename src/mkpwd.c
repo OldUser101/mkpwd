@@ -1,11 +1,19 @@
-#include <stdio.h>
-#include <time.h>
-#include <string.h>
-#include <stdlib.h>
+/***************************************/
+/* mkwpd main source file              */
+/* (c) 2025 Nathan Gill                */
+/* https://github.com/OldUser101/mkpwd */
+/***************************************/
+
+#include <ctype.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #include "mkpwd.h"
 
+bool DEBUG = false;
 int DEF_PASSWORDLEN = 18;
 int DEF_PASSWORDN = 1;
 bool DEF_PASSWORDCHARS[4] = { true, true, true, false };
@@ -112,9 +120,9 @@ int getArgNumber(int argc, char* argv[], int* i) {
 		int n = atoi(stripPrefixes(argv[(*i) + 1]));
 		(*i)++;		// Skip the next argument
 
-#ifdef DEBUG
-		printf("%i: %dn\n", i + 1, n);
-#endif
+		if (DEBUG) {
+			printf("%i: %dn\n", *(i) + 1, n);
+		}
 
 		return n;
 	}
@@ -174,8 +182,8 @@ bool parseCharArguments(bool* chars, char* args) {
 			default:
 				ERRORROUTINE("argument error", 1);
 				break;
-			}
 		}
+	}
 	return chars_set;
 }
 
@@ -190,9 +198,9 @@ void fillFromArgs(PasswordOptions* options, int argc, char* argv[]) {
 		toLower(argv[i]);
 		char* stripped = stripPrefixes(argv[i]);
 
-#ifdef DEBUG
-		printf("%i: \"%s\" -> \"%s\"\n", i, argv[i], stripped);
-#endif
+		if (DEBUG) {
+			printf("%i: \"%s\" -> \"%s\"\n", i, argv[i], stripped);
+		}
 
 		if (!strcmp(stripped, "n") || !strcmp(stripped, "number")) {
 			options->n = getArgNumber(argc, argv, &i);
@@ -227,38 +235,113 @@ void fillFromArgs(PasswordOptions* options, int argc, char* argv[]) {
 	}
 }
 
-void searchEnvVars() {
-	char* envPasswordN = getenv("MKPWD_DEF_PASSWORDN");
-	if (envPasswordN) {
-		char* stripped = stripPrefixes(envPasswordN);
-		if (strcmp(stripped, "") != 0) {
-			DEF_PASSWORDN = atoi(stripped);
+void trim(char* s) {
+	while (isspace((unsigned char)*s)) {
+		s++;
+	}
+
+	char* end = s + strlen(s) - 1;
+	while (end > s && isspace((unsigned char)*end)) {
+		end--;
+	}
+
+	*(end + 1) = '\0';
+}
+
+void getConf(char* p) {
+	const char* home = getenv("HOME");
+	char expanded[1024];
+	snprintf(expanded, sizeof(expanded), "%s/.mkpwd", home);
+	strncpy(p, expanded, 1023);
+	p[1023] = '\0';
+}
+
+void parseConfig() {
+	char path[1024];
+	getConf(path);
+
+	FILE* f = fopen(path, "r");
+	if (!f) {
+		return;
+	}
+
+	char line[256];
+	while (fgets(line, sizeof(line), f)) {
+		if (line[0] == '#' || isspace(line[0])) {
+			continue;
+
+		}
+
+		line[strcspn(line, "\n")] = '\0';
+
+		char* eqs = strchr(line, '=');
+		if (eqs) {
+			*eqs = '\0';
+			eqs++;
+
+			trim(line);
+			trim(eqs);
+
+			if (DEBUG) {
+				printf("Key: '%s', Value: '%s'\n", line, eqs);
+			}
+
+			if (!strcmp("DEF_PASSWORDN", line)) {
+                		if (strcmp(eqs, "") != 0) {
+                        		DEF_PASSWORDN = atoi(eqs);
+                		}
+			}
+			else if (!strcmp("DEF_PASSWORDLEN", line)) {
+                		if (strcmp(eqs, "") != 0) {
+                        		DEF_PASSWORDLEN = atoi(eqs);
+                		}
+			}
+			else if (!strcmp("DEF_PASSWORDCHARS", line)) {
+                		if (strcmp(eqs, "") != 0) {
+                        		DEF_PASSWORDCHARS[0] = false;
+                        		DEF_PASSWORDCHARS[1] = false;
+                        		DEF_PASSWORDCHARS[2] = false;
+                        		DEF_PASSWORDCHARS[3] = false;
+                        		parseCharArguments(&(DEF_PASSWORDCHARS[0]), eqs);
+                		}
+			}
+			else {
+				printf("unknown configuration: '%s'='%s'. see 'man mkpwd'.\n", line, eqs);
+			}
 		}
 	}
 
-	char* envPasswordLen = getenv("MKPWD_DEF_PASSWORDLEN");
-	if (envPasswordLen) {
-		char* stripped = stripPrefixes(envPasswordLen);
-		if (strcmp(stripped, "") != 0) {
-			DEF_PASSWORDLEN = atoi(stripped);
-		}
-	}
+	fclose(f);
+}
 
-	char* envPasswordChars = getenv("MKPWD_DEF_PASSWORDCHARS");
-	if (envPasswordChars) {
-		char* stripped = stripPrefixes(envPasswordChars);
-		if (strcmp(stripped, "") != 0) {
-		        DEF_PASSWORDCHARS[0] = false;
-		        DEF_PASSWORDCHARS[1] = false;
-		        DEF_PASSWORDCHARS[2] = false;
-		        DEF_PASSWORDCHARS[3] = false;
-                        parseCharArguments(&(DEF_PASSWORDCHARS[0]), stripped);
+bool checkConfig() {
+	char path[1024];
+	getConf(path);
+
+	FILE* f = fopen(path, "r");
+	if (!f) {
+		if (DEBUG) {
+			printf("Configuration file does not exist\n");
 		}
+		return false;
 	}
+	fclose(f);
+
+	if (DEBUG) {
+		printf("Configuration file exists\n");
+	}
+	return true;
 }
 
 int main(int argc, char* argv[]) {
-	searchEnvVars();
+	const char* debug_env = getenv("MKPWD_DEBUG");
+	if (debug_env != NULL && !strcmp(debug_env, "TRUE")) {
+		DEBUG = true;
+	}
+
+	if (checkConfig()) {
+		parseConfig();
+	}
 
 	srand(getRandomSeed());
 

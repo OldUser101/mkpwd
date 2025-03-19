@@ -1,3 +1,9 @@
+/***************************************/
+/* mkwpd header file                   */
+/* (c) 2025 Nathan Gill                */
+/* https://github.com/OldUser101/mkpwd */
+/***************************************/
+
 #pragma once
 
 typedef struct {

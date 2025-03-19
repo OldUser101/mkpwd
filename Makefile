@@ -1,5 +1,8 @@
-# mkpwd Makefile
-# https://github.com/OldUser101/mkpwd
+#######################################
+# mkpwd Makefile                      #
+# (c) 2025 Nathan Gill                #
+# https://github.com/OldUser101/mkpwd #
+#######################################
 
 ## VARIABLES ##
 SRC_DIR_MKPWD := src

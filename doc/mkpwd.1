@@ -29,15 +29,16 @@ Include character sets:
 .B mkpwd -n 5 -l 12 +lus
 
 Generates 5 passwords of length 12 using lowercase letters, uppercase letters, and symbols.
-.SH ENVIRONMENT
+.SH CONFIGURATION
+The configuration file \fB~/.mkpwd\fR can be used to set the following options:
 .TP
-.B MKPWD_DEF_PASSWORDN
+.B DEF_PASSWORDN
 Default value for \fB-n\fR.
 .TP
-.B MKPWD_DEF_PASSWORDLEN
+.B DEF_PASSWORDLEN
 Default value for \fB-l\fR.
 .TP
-.B MKPWD_DEF_PASSWORDCHARS
+.B DEF_PASSWORDCHARS
 Default value for \fB+lusn\fR.
 .SH ERROR CODES
 .TP
@@ -49,6 +50,9 @@ Argument error. Check passed arguments and environment variables for errors.
 .TP
 .B 2
 Memory allocation error. There is not enough memory available to run \fBmkpwd\fR in the current configuration.
+.TP
+.B 3
+Configuration error. Check syntax of \fB~/.mkpwd\fR.
 .SH AUTHOR
 Written by Nathan Gill.
 .SH LICENSE
